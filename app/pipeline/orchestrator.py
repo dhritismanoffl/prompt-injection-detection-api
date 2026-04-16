@@ -1,57 +1,50 @@
-from app.preprocessing.cleaner import TextCleaner
-from app.detection.rules.override_rules import OverrideRule
+from typing import Dict, Any
+
+from app.schemas.request import ScanRequest
+
+from app.detection.rules.contextual_rules import ContextualRule
 from app.detection.rules.exfiltration_rules import ExfiltrationRule
 from app.detection.rules.jailbreak_rules import JailbreakRule
-from app.detection.rules.obfuscation_rules import ObfuscationRule
-from app.detection.rules.contextual_rules import ContextualRule
+from app.detection.rules.override_rules import OverrideRule
 from app.detection.rules.keyword_rules import KeywordRule
-from app.detection.scoring import ScoringEngine
+from app.detection.rules.obfuscation_rules import ObfuscationRule
+
+from app.detection.scoring import calculate_score
 from app.decision.engine import DecisionEngine
-from app.schemas.response import ScanResponse
 
 
-class DetectionOrchestrator:
-    """
-    Coordinates the full prompt detection pipeline.
-    """
-
+class Orchestrator:
     def __init__(self):
-        self.cleaner = TextCleaner()
-        self.scoring_engine = ScoringEngine()
-        self.decision_engine = DecisionEngine()
-
         self.rules = [
             OverrideRule(),
-            ExfiltrationRule(),
             JailbreakRule(),
-            ObfuscationRule(),
+            ExfiltrationRule(),
             ContextualRule(),
             KeywordRule(),
+            ObfuscationRule(),
         ]
+        self.decision_engine = DecisionEngine()
 
-    def scan_prompt(self, prompt: str) -> ScanResponse:
-        """
-        Execute detection pipeline:
-        Clean -> Detect -> Score -> Decide -> Format
-        """
-        cleaned_text = self.cleaner.clean(prompt)
+    def run(self, request: ScanRequest) -> Dict[str, Any]:
+        text = request.prompt
 
-        detection_results = [
-            rule.evaluate(cleaned_text)
-            for rule in self.rules
-        ]
+        results = []
 
-        scoring = self.scoring_engine.aggregate(detection_results)
+        # Execute all rules
+        for rule in self.rules:
+            triggered, score, flag = rule.evaluate(text)
+            results.append((triggered, score, flag))
 
-        decision = self.decision_engine.determine(
-            scoring["score"],
-            scoring["flags"]
-        )
+        # Calculate score (stubbed in public version)
+        final_score = calculate_score(results)
 
-        return ScanResponse(
-            risk_level=decision["risk_level"],
-            score=scoring["score"],
-            flags=scoring["flags"],
-            action=decision["action"],
-            logged=False
-        )
+        # Decision (stubbed behavior expected)
+        decision = self.decision_engine.decide(final_score, results)
+
+        # Return standardized response
+        return {
+            "risk_level": decision.get("risk_level", "low"),
+            "score": final_score,
+            "flags": [],
+            "action": decision.get("action", "allow"),
+        }
