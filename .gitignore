@@ -3,21 +3,42 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Virtual environments
 venv/
 env/
 .venv/
 
+# Editors / IDEs
 .vscode/
 .idea/
 
+# Logs
 *.log
+
+# OS files
 .DS_Store
 Thumbs.db
 
+# Temp files
 *.swp
 *.swo
 
+# Environment variables
 .env
 .env.*
 
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Test / coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Type checkers
+.mypy_cache/
+
+# Exclude private/internal datasets
 benchmarks/

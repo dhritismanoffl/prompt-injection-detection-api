@@ -1,14 +1,17 @@
 from typing import Tuple, Optional
 from app.detection.rules.base import BaseRule
+from app.core.constants import FLAG_PROMPT_LEAK
 
 
 class ExfiltrationRule(BaseRule):
-    def __init__(self):
-        # Detection logic is not exposed in the public version
-        pass
-
     def evaluate(self, text: str) -> Tuple[bool, float, Optional[str]]:
-        """
-        Public version: exfiltration detection logic is abstracted.
-        """
+        t = text.lower()
+
+        if (
+            "reveal the system prompt" in t
+            or "show hidden instructions" in t
+            or "print the system prompt" in t
+        ):
+            return True, 0.75, FLAG_PROMPT_LEAK
+
         return False, 0.0, None

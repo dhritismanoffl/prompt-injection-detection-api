@@ -1,14 +1,17 @@
 from typing import Tuple, Optional
 from app.detection.rules.base import BaseRule
+from app.core.constants import FLAG_JAILBREAK
 
 
 class JailbreakRule(BaseRule):
-    def __init__(self):
-        # Detection logic is not exposed in the public version
-        pass
-
     def evaluate(self, text: str) -> Tuple[bool, float, Optional[str]]:
-        """
-        Public version: jailbreak detection logic is abstracted.
-        """
+        t = text.lower()
+
+        if (
+            "bypass restrictions" in t
+            or "ignore safety guidelines" in t
+            or "do not follow previous rules" in t
+        ):
+            return True, 0.65, FLAG_JAILBREAK
+
         return False, 0.0, None
