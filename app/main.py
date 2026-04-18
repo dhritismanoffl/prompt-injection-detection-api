@@ -5,7 +5,7 @@ from app.api.v1.routes import router as v1_router
 
 app = FastAPI(
     title="Prompt Injection Detection API",
-    description="API for detecting prompt injection, jailbreak, and exfiltration attempts in LLM inputs.",
+    description="Pre-LLM security API for detecting prompt injection, jailbreak, and data exfiltration attempts.",
     version="1.0.0"
 )
 
