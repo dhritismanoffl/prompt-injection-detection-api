@@ -1,6 +1,6 @@
 # Prompt Injection Detection API
 
-A lightweight API for detecting prompt injection, jailbreak, and exfiltration attempts **before input reaches an LLM**.
+A lightweight API for detecting prompt injection, jailbreak, and exfiltration attempts **before input reaches the LLM**.
 
 ---
 
